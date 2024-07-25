@@ -1,0 +1,96 @@
+* {
+  color: white;
+  background-color: black;
+}
+
+.BoardRow {
+  display: inline-grid;
+}
+
+.filler {
+  color: transparent;
+  animation: ReverseGlow 1s ease-in-out infinite alternate !important;
+}
+
+.SquareTile {
+  color: white;
+  box-sizing: border-box;
+  font-family: Sans-serif;
+  display: inline-grid;
+  width: 30vh;
+  height: 30vh;
+  font-size: 6em;
+  border: 3px solid white;
+  justify-content: center;
+  align-items: center;
+  animation: glowTilePink 1s ease-in-out infinite alternate;
+}
+
+#O {
+  animation: glowTileBlue 1s ease-in-out infinite alternate;
+}
+
+#Y {
+  animation: glowTileYellow 1s ease-in-out infinite alternate;
+}
+
+@keyframes ReverseGlow {
+  from {
+    text-shadow: 0 0 10px #000000, 0 0 20px #000, 0 0 30px #000, 0 0 40px #000,
+      0 0 50px #000, 0 0 60px #000, 0 0 70px #000;
+  }
+  to {
+    text-shadow: 0 0 20px #000, 0 0 30px #000, 0 0 40px #000, 0 0 50px #000,
+      0 0 60px #000, 0 0 70px #000, 0 0 80px #000;
+  }
+}
+
+@keyframes glowTilePink {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073,
+      0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6,
+      0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  }
+}
+
+@keyframes glowTileBlue {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0095ff,
+      0 0 40px #0095ff, 0 0 50px #0095ff, 0 0 60px #0095ff, 0 0 70px #0095ff;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #00a2ff, 0 0 40px #00a2ff,
+      0 0 50px #00a2ff, 0 0 60px #00a2ff, 0 0 70px #00a2ff, 0 0 80px #00a2ff;
+  }
+}
+
+@keyframes glowTileYellow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e9e50e,
+      0 0 40px #e9e50e, 0 0 50px #e9e50e, 0 0 60px #e9e50e, 0 0 70px #e9e50e;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #fffb00, 0 0 40px #fffb00,
+      0 0 50px #fffb00, 0 0 60px #fffb00, 0 0 70px #fffb00, 0 0 80px #fffb00;
+  }
+}
+
+.reset {
+  border: none;
+  padding: 15px;
+  outline: none;
+  font-size: 2em;
+  margin: 1em;
+  display: inline-grids;
+  transition: 0.5s ease-in-out;
+}
+
+.reset:hover {
+  box-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6,
+    0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  border-radius: 30px;
+  transition: 0.5s ease-in-out;
+}
