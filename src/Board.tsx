@@ -48,97 +48,92 @@ export default function Game() {
     setTiles(updateTile);
   }
 
-  function checkLine(
-    tileSample: typeof tiles,
-    a: number,
-    b: number,
-    c: number,
-    character: string
-  ) {
-    if (
-      tileSample[a].props.id == "." &&
-      tileSample[b].props.id == character &&
-      tileSample[c].props.id == character
-    ) {
-      return a;
+  function getAvailableMoves(tileSample: typeof tiles): number[] {
+    return tileSample.reduce((acc: number[], tile, idx) => {
+      if (tile.props.id === ".") acc.push(idx);
+      return acc;
+    }, []);
+  }
+
+  function evaluate(tileSample: typeof tiles): number {
+    for (const [a, b, c] of possibilities) {
+      if (
+        tileSample[a].props.id !== "." &&
+        tileSample[a].props.id === tileSample[b].props.id &&
+        tileSample[a].props.id === tileSample[c].props.id
+      ) {
+        return tileSample[a].props.id === "O" ? 1 : -1;
+      }
     }
+    return 0;
+  }
+
+  function minimax(
+    newBoard: typeof tiles,
+    depth: number,
+    alpha: number,
+    beta: number,
+    isMaximizing: boolean
+  ): number {
+    const score = evaluate(newBoard);
     if (
-      tileSample[b].props.id == "." &&
-      tileSample[a].props.id == character &&
-      tileSample[c].props.id == character
+      score === 1 ||
+      score === -1 ||
+      getAvailableMoves(newBoard).length === 0
     ) {
-      return b;
+      return score;
     }
-    if (
-      tileSample[c].props.id == "." &&
-      tileSample[b].props.id == character &&
-      tileSample[a].props.id == character
-    ) {
-      return c;
+
+    if (isMaximizing) {
+      let maxEval = -Infinity;
+      for (const idx of getAvailableMoves(newBoard)) {
+        const boardCopy = [...newBoard];
+        boardCopy[idx] = (
+          <div className="filled" id="O">
+            O
+          </div>
+        );
+        const evalScore = minimax(boardCopy, depth + 1, alpha, beta, false);
+        maxEval = Math.max(maxEval, evalScore);
+        alpha = Math.max(alpha, evalScore);
+        if (beta <= alpha) break;
+      }
+      return maxEval;
+    } else {
+      let minEval = Infinity;
+      for (const idx of getAvailableMoves(newBoard)) {
+        const boardCopy = [...newBoard];
+        boardCopy[idx] = (
+          <div className="filled" id="X">
+            X
+          </div>
+        );
+        const evalScore = minimax(boardCopy, depth + 1, alpha, beta, true);
+        minEval = Math.min(minEval, evalScore);
+        beta = Math.min(beta, evalScore);
+        if (beta <= alpha) break;
+      }
+      return minEval;
     }
-    return 10;
   }
 
   function ComputerMove(tileSample: typeof tiles): number {
-    if (tileSample[4].props.id == ".") {
-      return 4;
-    }
-
-    for (let i = 0; i < 3; i++) {
-      if (checkLine(tileSample, i, i + 3, i + 6, "O") !== 10) {
-        return checkLine(tileSample, i, i + 3, i + 6, "O");
+    let bestScore = -Infinity;
+    let move = -1;
+    for (const idx of getAvailableMoves(tileSample)) {
+      const boardCopy = [...tileSample];
+      boardCopy[idx] = (
+        <div className="filled" id="O">
+          O
+        </div>
+      );
+      const score = minimax(boardCopy, 0, -Infinity, Infinity, false);
+      if (score > bestScore) {
+        bestScore = score;
+        move = idx;
       }
     }
-
-    for (let i = 0; i <= 6; i += 3) {
-      if (checkLine(tileSample, i, i + 1, i + 2, "O") !== 10) {
-        return checkLine(tileSample, i, i + 1, i + 2, "O");
-      }
-    }
-
-    if (checkLine(tileSample, 0, 4, 8, "O") !== 10) {
-      return checkLine(tileSample, 0, 4, 8, "O");
-    }
-
-    if (checkLine(tileSample, 2, 4, 6, "O") !== 10) {
-      return checkLine(tileSample, 2, 4, 6, "O");
-    }
-
-    for (let i = 0; i < 3; i++) {
-      if (checkLine(tileSample, i, i + 3, i + 6, "X") !== 10) {
-        return checkLine(tileSample, i, i + 3, i + 6, "X");
-      }
-    }
-
-    for (let i = 0; i <= 6; i += 3) {
-      if (checkLine(tileSample, i, i + 1, i + 2, "X") !== 10) {
-        return checkLine(tileSample, i, i + 1, i + 2, "X");
-      }
-    }
-
-    if (checkLine(tileSample, 0, 4, 8, "X") !== 10) {
-      return checkLine(tileSample, 0, 4, 8, "X");
-    }
-
-    if (checkLine(tileSample, 2, 4, 6, "X") !== 10) {
-      return checkLine(tileSample, 2, 4, 6, "X");
-    }
-
-    if (
-      tileSample[1].props.id == "." ||
-      tileSample[3].props.id == "." ||
-      tileSample[5].props.id == "." ||
-      tileSample[7].props.id == "."
-    ) {
-      let edgeRandom = Math.floor(Math.random() * 4) * 2 + 1;
-      return tileSample[edgeRandom].props.id == "."
-        ? edgeRandom
-        : ComputerMove(tileSample);
-    }
-    let anyRandom = Math.floor(Math.random() * 9);
-    return tileSample[anyRandom].props.id == "."
-      ? anyRandom
-      : ComputerMove(tileSample);
+    return move;
   }
 
   function tileClicked(index: number) {
