@@ -12,6 +12,8 @@ let possibilities = [
   [2, 4, 6],
 ];
 //hey
+
+//hey8
 //hey7
 
 //hey6
@@ -21,6 +23,7 @@ let possibilities = [
 //hey2
 
 type GameStatus = 'playing' | 'won' | 'lost' | 'draw';
+
 let updateTileColor;
 let winDeclared = false;
 let moveCount = 0;
