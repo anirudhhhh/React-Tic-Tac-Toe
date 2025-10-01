@@ -11,20 +11,23 @@ let possibilities = [
   [0, 4, 8],
   [2, 4, 6],
 ];
-//hey
-//hey1
+
+type GameStatus = 'playing' | 'won' | 'lost' | 'draw';
+
 let updateTileColor;
 let winDeclared = false;
 let moveCount = 0;
 
 export default function Game() {
-  let createTileSetup = Array(9).fill(
+  const createTileSetup = Array(9).fill(
     <div className="filler" id=".">
       .
     </div>
   );
 
   const [tiles, setTiles] = useState(createTileSetup);
+  const [gameStatus, setGameStatus] = useState<GameStatus>('playing');
+  const [winner, setWinner] = useState<string | null>(null);
 
   useEffect(() => {
     CheckGameBoard();
@@ -32,7 +35,7 @@ export default function Game() {
 
   function placeTile(PlayerIndex: number) {
     moveCount++;
-    let updateTile = tiles.slice();
+    const updateTile = tiles.slice();
     updateTile[PlayerIndex] = (
       <div className="filled" id="X">
         X
@@ -149,8 +152,9 @@ export default function Game() {
   }
 
   function CheckGameBoard() {
+    // Check for winner
     for (let i = 0; i < 8; i++) {
-      let [a, b, c] = possibilities[i];
+      const [a, b, c] = possibilities[i];
       if (
         winDeclared == false &&
         tiles[a].props.id !== "." &&
@@ -158,130 +162,195 @@ export default function Game() {
         tiles[a].props.id == tiles[c].props.id
       ) {
         winDeclared = true;
+        const winningPlayer = tiles[a].props.id;
+        
         updateTileColor = tiles.slice();
         updateTileColor[a] = (
           <div className="filled" id="Y">
-            {tiles[a].props.id}
+            {winningPlayer}
           </div>
         );
         updateTileColor[b] = (
           <div className="filled" id="Y">
-            {tiles[a].props.id}
+            {winningPlayer}
           </div>
         );
         updateTileColor[c] = (
           <div className="filled" id="Y">
-            {tiles[a].props.id}
+            {winningPlayer}
           </div>
         );
         setTiles(updateTileColor);
-        return tiles[a].props.id;
+        
+        // Set game status based on winner
+        setWinner(winningPlayer);
+        if (winningPlayer === 'X') {
+          setGameStatus('won');
+        } else {
+          setGameStatus('lost');
+        }
+        
+        return winningPlayer;
       }
     }
+    
+    // Check for draw (all tiles filled, no winner)
+    const filledTiles = tiles.filter(tile => tile.props.id !== '.').length;
+    if (filledTiles === 9 && !winDeclared) {
+      setGameStatus('draw');
+      return "Draw";
+    }
+    
     return "Continue";
+  }
+
+  function restartGame() {
+    winDeclared = false;
+    moveCount = 0;
+    setGameStatus('playing');
+    setWinner(null);
+    setTiles(
+      Array(9).fill(
+        <div className="filler" id=".">
+          .
+        </div>
+      )
+    );
+  }
+
+  function renderEndGameMessage() {
+    if (gameStatus === 'playing') return null;
+
+    return (
+      <div className="game-overlay">
+        <div className="end-game-message">
+          {gameStatus === 'won' && (
+            <div className="win-message">
+              <div className="message-text win-text">🎉 YOU WIN! 🎉</div>
+              <div className="sub-text">Congratulations! You beat the AI!</div>
+            </div>
+          )}
+          
+          {gameStatus === 'lost' && (
+            <div className="lose-message">
+              <div className="message-text lose-text">💔 YOU LOSE! 💔</div>
+              <div className="sub-text">Better luck next time!</div>
+            </div>
+          )}
+          
+          {gameStatus === 'draw' && (
+            <div className="draw-message">
+              <div className="message-text draw-text">🤝 IT'S A DRAW! 🤝</div>
+              <div className="sub-text">Great minds think alike!</div>
+            </div>
+          )}
+          
+          <button className="play-again-btn" onClick={restartGame}>
+            🚀 PLAY AGAIN 🚀
+          </button>
+        </div>
+      </div>
+    );
   }
 
   function makeBoard() {
     return (
-      <>
-        <div className="BoardRow">
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(0);
-            }}
-          >
-            {tiles[0]}
+      <div className="game-container">
+        <div className="board-container">
+          <div className="BoardRow">
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(0);
+              }}
+            >
+              {tiles[0]}
+            </div>
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(1);
+              }}
+            >
+              {tiles[1]}
+            </div>
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(2);
+              }}
+            >
+              {tiles[2]}
+            </div>
           </div>
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(1);
-            }}
-          >
-            {tiles[1]}
+          <div className="BoardRow">
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(3);
+              }}
+            >
+              {tiles[3]}
+            </div>
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(4);
+              }}
+            >
+              {tiles[4]}
+            </div>
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(5);
+              }}
+            >
+              {tiles[5]}
+            </div>
           </div>
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(2);
-            }}
-          >
-            {tiles[2]}
-          </div>
-        </div>
-        <div className="BoardRow">
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(3);
-            }}
-          >
-            {tiles[3]}
-          </div>
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(4);
-            }}
-          >
-            {tiles[4]}
-          </div>
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(5);
-            }}
-          >
-            {tiles[5]}
-          </div>
-        </div>
-        <div className="BoardRow">
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(6);
-            }}
-          >
-            {tiles[6]}
-          </div>
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(7);
-            }}
-          >
-            {tiles[7]}
-          </div>
-          <div
-            className="SquareTile"
-            onClick={() => {
-              tileClicked(8);
-            }}
-          >
-            {tiles[8]}
+          <div className="BoardRow">
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(6);
+              }}
+            >
+              {tiles[6]}
+            </div>
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(7);
+              }}
+            >
+              {tiles[7]}
+            </div>
+            <div
+              className="SquareTile"
+              onClick={() => {
+                tileClicked(8);
+              }}
+            >
+              {tiles[8]}
+            </div>
           </div>
         </div>
 
         <button
           className="reset"
-          onClick={() => {
-            winDeclared = false;
-            moveCount = 0;
-            setTiles(
-              Array(9).fill(
-                <div className="filler" id=".">
-                  .
-                </div>
-              )
-            );
-          }}
+          onClick={restartGame}
         >
-          reset
+          Reset Game
         </button>
-      </>
+      </div>
     );
   }
 
-  return <>{makeBoard()}</>;
+  return (
+    <>
+      {makeBoard()}
+      {renderEndGameMessage()}
+    </>
+  );
 }
