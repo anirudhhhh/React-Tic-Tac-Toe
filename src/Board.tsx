@@ -21,6 +21,13 @@ let possibilities = [
 //hey2
 
 type GameStatus = 'playing' | 'won' | 'lost' | 'draw';
+type GameResult = {
+  id: string;
+  result: 'won' | 'lost' | 'draw';
+  date: string;
+  moves: number;
+};
+
 let updateTileColor;
 let winDeclared = false;
 let moveCount = 0;
@@ -35,10 +42,104 @@ export default function Game() {
   const [tiles, setTiles] = useState(createTileSetup);
   const [gameStatus, setGameStatus] = useState<GameStatus>('playing');
   const [winner, setWinner] = useState<string | null>(null);
+  const [gameHistory, setGameHistory] = useState<GameResult[]>(() => {
+    const saved = localStorage.getItem('ticTacToeHistory');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     CheckGameBoard();
   }, [tiles]);
+
+  const saveGameResult = (result: 'won' | 'lost' | 'draw') => {
+    const newGame: GameResult = {
+      id: Date.now().toString(),
+      result,
+      date: new Date().toLocaleDateString(),
+      moves: moveCount
+    };
+    
+    const updatedHistory = [newGame, ...gameHistory].slice(0, 5); // Keep only last 5 games
+    setGameHistory(updatedHistory);
+    localStorage.setItem('ticTacToeHistory', JSON.stringify(updatedHistory));
+  };
+
+  function GameHistory() {
+    const getResultIcon = (result: string) => {
+      switch (result) {
+        case 'won': return '🎉';
+        case 'lost': return '💔';
+        case 'draw': return '🤝';
+        default: return '?';
+      }
+    };
+
+    const getResultText = (result: string) => {
+      switch (result) {
+        case 'won': return 'WIN';
+        case 'lost': return 'LOSS';
+        case 'draw': return 'DRAW';
+        default: return '?';
+      }
+    };
+
+    if (gameHistory.length === 0) {
+      return (
+        <div className="history-panel">
+          <div className="history-header">
+            <h3 className="history-title">🏆 Game History</h3>
+            <div className="history-subtitle">Last 5 Games</div>
+          </div>
+          <div className="history-empty">
+            <div className="empty-icon">🎮</div>
+            <div className="empty-text">No games played yet</div>
+            <div className="empty-subtext">Start playing to see your history!</div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="history-panel">
+        <div className="history-header">
+          <h3 className="history-title">🏆 Game History</h3>
+          <div className="history-subtitle">Last 5 Games</div>
+        </div>
+        <div className="history-list">
+          {gameHistory.map((game, index) => (
+            <div key={game.id} className={`history-item ${game.result}`}>
+              <div className="history-rank">#{index + 1}</div>
+              <div className="history-icon">{getResultIcon(game.result)}</div>
+              <div className="history-details">
+                <div className="history-result">{getResultText(game.result)}</div>
+                <div className="history-meta">
+                  <span className="history-moves">{game.moves} moves</span>
+                  <span className="history-date">{game.date}</span>
+                </div>
+              </div>
+              <div className={`history-badge ${game.result}-badge`}>
+                {getResultText(game.result)}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="history-stats">
+          <div className="stat-item won">
+            <span className="stat-number">{gameHistory.filter(g => g.result === 'won').length}</span>
+            <span className="stat-label">Wins</span>
+          </div>
+          <div className="stat-item lost">
+            <span className="stat-number">{gameHistory.filter(g => g.result === 'lost').length}</span>
+            <span className="stat-label">Losses</span>
+          </div>
+          <div className="stat-item draw">
+            <span className="stat-number">{gameHistory.filter(g => g.result === 'draw').length}</span>
+            <span className="stat-label">Draws</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   function placeTile(PlayerIndex: number) {
     moveCount++;
@@ -193,8 +294,10 @@ export default function Game() {
         setWinner(winningPlayer);
         if (winningPlayer === 'X') {
           setGameStatus('won');
+          saveGameResult('won');
         } else {
           setGameStatus('lost');
+          saveGameResult('lost');
         }
         
         return winningPlayer;
@@ -205,6 +308,7 @@ export default function Game() {
     const filledTiles = tiles.filter(tile => tile.props.id !== '.').length;
     if (filledTiles === 9 && !winDeclared) {
       setGameStatus('draw');
+      saveGameResult('draw');
       return "Draw";
     }
     
@@ -263,93 +367,97 @@ export default function Game() {
   function makeBoard() {
     return (
       <div className="game-container">
-        <div className="board-container">
-          <div className="BoardRow">
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(0);
-              }}
-            >
-              {tiles[0]}
+        <div className="game-main">
+          <div className="board-container">
+            <div className="BoardRow">
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(0);
+                }}
+              >
+                {tiles[0]}
+              </div>
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(1);
+                }}
+              >
+                {tiles[1]}
+              </div>
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(2);
+                }}
+              >
+                {tiles[2]}
+              </div>
             </div>
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(1);
-              }}
-            >
-              {tiles[1]}
+            <div className="BoardRow">
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(3);
+                }}
+              >
+                {tiles[3]}
+              </div>
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(4);
+                }}
+              >
+                {tiles[4]}
+              </div>
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(5);
+                }}
+              >
+                {tiles[5]}
+              </div>
             </div>
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(2);
-              }}
-            >
-              {tiles[2]}
+            <div className="BoardRow">
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(6);
+                }}
+              >
+                {tiles[6]}
+              </div>
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(7);
+                }}
+              >
+                {tiles[7]}
+              </div>
+              <div
+                className="SquareTile"
+                onClick={() => {
+                  tileClicked(8);
+                }}
+              >
+                {tiles[8]}
+              </div>
             </div>
           </div>
-          <div className="BoardRow">
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(3);
-              }}
-            >
-              {tiles[3]}
-            </div>
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(4);
-              }}
-            >
-              {tiles[4]}
-            </div>
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(5);
-              }}
-            >
-              {tiles[5]}
-            </div>
-          </div>
-          <div className="BoardRow">
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(6);
-              }}
-            >
-              {tiles[6]}
-            </div>
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(7);
-              }}
-            >
-              {tiles[7]}
-            </div>
-            <div
-              className="SquareTile"
-              onClick={() => {
-                tileClicked(8);
-              }}
-            >
-              {tiles[8]}
-            </div>
-          </div>
-        </div>
 
-        <button
-          className="reset"
-          onClick={restartGame}
-        >
-          Reset Game
-        </button>
+          <button
+            className="reset"
+            onClick={restartGame}
+          >
+            Reset Game
+          </button>
+        </div>
+        
+        <GameHistory />
       </div>
     );
   }
