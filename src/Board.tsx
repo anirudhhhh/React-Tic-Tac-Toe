@@ -12,6 +12,8 @@ let possibilities = [
   [2, 4, 6],
 ];
 //hey
+
+//hey3
 //hey2
 
 type GameStatus = 'playing' | 'won' | 'lost' | 'draw';
