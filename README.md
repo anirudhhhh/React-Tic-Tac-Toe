@@ -1,56 +1,89 @@
-# React + TypeScript + Vite
+# 🎮 React Tic Tac Toe (Single Player)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fun and interactive **single-player Tic Tac Toe** game built with **React + TypeScript**.  
+Challenge the AI, track your match history, and enjoy a nostalgic classic reimagined for the web.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🧩 Overview
 
-## Expanding the ESLint configuration
+This project implements a **Tic Tac Toe** game where the player competes against a computer opponent powered by a **minimax algorithm** with alpha-beta pruning.  
+It also maintains a **local game history** that shows your recent wins, losses, and draws (up to the last 5 games).
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Even though there are a few rough edges in the current version, the project showcases how to:
+- Manage game logic and UI with React hooks.
+- Implement and visualize a simple AI opponent.
+- Store data persistently using **localStorage**.
+- Render responsive layouts and status messages dynamically.
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## 🕹️ Features
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+✅ Play as **X** against a computer opponent (**O**).  
+✅ Displays win, loss, or draw messages with emojis.  
+✅ Keeps your last **5 games** saved locally in the browser.  
+✅ Clean and minimal interface with custom styling (`Board.css`).  
+✅ Reset and play again anytime.
 
+---
 
-### How to Contribute
+## 🧠 Tech Stack
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- **React** (Functional Components + Hooks)
+- **TypeScript**
+- **CSS** for UI styling
+- **LocalStorage** for saving game history
+- **Minimax Algorithm (with Alpha-Beta Pruning)** – powers the AI opponent  
 
-## Contributors
+---
 
-Thanks to all the contributors who have helped make this project better!
+## 🗂️ Project Structure
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/mehedihasankhairul">
-        <img src="https://avatars.githubusercontent.com/u/55708248?v=4" width="100px;" alt="mehedi hasan khairul"/><br />
-        <sub><b>Mehedi Hasan Khairul</b></sub>
-      </a>
-    </td>
-    <!-- Add more contributors as needed -->
-  </tr>
-</table>
+[src](./src/)  
+  ├── [board.css](./src/Board.css)  
+  ├── [board.tsx](./src/Board.tsx)  
 
+The entire game logic (rendering, AI, game state, and UI) lives in [Board.tsx](./src/Board.tsx).
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to run the project locally:
+
+1. **Clone the repository**
+
+  ```bash
+  git clone https://github.com/<your-username>/<repo-name>.git
+  ```
+2. **Navigate to the project**
+  ```bash
+  cd <repo-name>
+  ```
+3. **Install dependencies**
+  ```bash
+  npm install
+  ```
+4. **Run the app**
+  ```bash
+  npm run dev
+  ```
+5. **Open your browser and go to http://localhost:5173**
+
+---
+
+## 🎯 How to Play
+
+1. Click on a square to place your **X**.  
+2. The computer will respond with an **O**.  
+3. The game ends when either player wins or all tiles are filled.  
+4. Results are automatically stored and shown in the **Game History** section.  
+5. Use the **Reset Game** button to start a new round.
+
+---
+
+## 👨‍💻 Contributing
+
+Contributions are welcome!  
+Please refer to [CONTRIBUTION GUIDELIENS](./CONTRIBUTING.md) for making a contribution.
